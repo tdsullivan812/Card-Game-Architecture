@@ -4,7 +4,13 @@ using UnityEngine;
 
 public abstract class NPC : Player
 {
-    public string npcName;
+
+    public NPC(string newName)
+    {
+        name = newName;
+    }
+
+
     public Sprite npcSprite;
     public Card selectedCard;
     public string successMessage;

@@ -1,26 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Deck : ICardGameElement
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Deck", order = 1)]
+public class Deck : ScriptableObject, ICardGameElement
 {
     
     public List<Card> cardsInDeck;
+    public string[] namesOfCards;
 
     public Deck()
     {
         cardsInDeck = new List<Card>();
         Shuffle();
     }
-    
+
     public Card Draw(Hand receivingHand)
     {
-        
-        var cardToDraw = cardsInDeck[0];
-        Remove(cardToDraw);
-        //Encounter.playerHand.AddToHand(cardToDraw);
-        Debug.Log("drew card");
-        return receivingHand.Add(cardToDraw);
+        if (cardsInDeck.Count > 0)
+        { 
+
+            var cardToDraw = cardsInDeck[0];
+            Remove(cardToDraw);
+            //Encounter.playerHand.AddToHand(cardToDraw);
+            Debug.Log("drew card");
+            return receivingHand.Add(cardToDraw);
+        }
+
+        return null;
     }
     
 
@@ -55,4 +64,23 @@ public class Deck : ICardGameElement
     }
 
 
+
 }
+#if UNITY_EDITOR
+[CustomEditor(typeof(Deck)), CanEditMultipleObjects]
+public class DeckEditor : Editor
+{
+    SerializedProperty m_namesOfCards;
+    
+    private void OnEnable()
+    {
+        m_namesOfCards = serializedObject.FindProperty("namesOfCards");
+    }
+
+    public override void OnInspectorGUI()
+    {
+        EditorGUILayout.PropertyField(m_namesOfCards, new GUIContent("Cards in Deck"));
+        serializedObject.ApplyModifiedProperties();
+    }
+}
+#endif
